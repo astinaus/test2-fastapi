@@ -19,6 +19,14 @@ class Cat(BaseModel):
     id: int = 0
 
 
+class RequestInsertRegionDTO(BaseModel):
+    regionName: str
+
+
+class RequestUpdateRegionDTO(BaseModel):
+    regionName: str
+
+
 app = FastAPI()
 
 
@@ -90,3 +98,73 @@ async def fetch_data():
     await database.disconnect()
 
     return results
+
+
+@app.post("/insert")
+async def fetch_insert(requestInsertRegionDTO: RequestInsertRegionDTO):
+
+    await database.connect()
+
+    error = False
+
+    try:
+        query = f"""INSERT INTO REGIONS
+                        (region_name)
+                    values
+                        ('{requestInsertRegionDTO.regionName}')"""
+        results = await database.execute(query)
+    except:
+        error = True
+    finally:
+        await database.disconnect()
+    if (error):
+        return "에러발생"
+
+    return results
+
+
+@app.put("/update/{id}")
+async def fetch_update(id : int, requestUpdateRegionDTO: RequestInsertRegionDTO):
+
+    await database.connect()
+    
+    error = False
+
+    try:
+        query = f"""UPDATE REGIONS
+                    SET 
+                        REGION_NAME = ('{requestUpdateRegionDTO.regionName}')
+                    WHERE
+                        REGION_ID = {id}"""
+        results = await database.execute(query)
+    except:
+        error = True
+    finally:
+        await database.disconnect()
+    if (error):
+        return "에러발생"
+
+    return results
+
+
+@app.delete("/delete/{id}")
+async def fetch_delete(id: int):
+    
+    await database.connect()
+    
+    error = False
+    
+    try:
+        query = f"""DELETE FROM REGIONS
+                    WHERE REGION_ID={id}"""
+                        
+        results = await database.execute(query)
+    except:
+        error = True
+    finally:
+        await database.disconnect()
+    if (error):
+        return "에러발생"
+
+    return results
+    
