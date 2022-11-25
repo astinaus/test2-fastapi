@@ -23,7 +23,7 @@ class RequestInsertRegionDTO(BaseModel):
     regionName: str
 
 
-class RequestUpdateRegionDTO(BaseModel):
+class RequestUpdateRegionDTO(BaseModel): 
     regionName: str
 
 
@@ -168,3 +168,12 @@ async def fetch_delete(id: int):
 
     return results
     
+@app.post("/files-base64/")
+async def bas64_file(
+    uploadFile: str = Form(), token: str = Form()
+):
+    # print(uploadFile)
+    return {
+        "token": token,
+        "uploadFile": uploadFile
+    }
